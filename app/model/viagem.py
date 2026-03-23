@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, Date, BigInteger, DateTime, Boolean, Enum
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, Date, BigInteger, DateTime, Boolean, Enum, DECIMAL, SmallInteger
 from app.database import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -31,6 +31,8 @@ class PassageiroModel(Base):
     media_avaliacao = Column(Float, nullable=True)
 
     usuario = relationship("UsuarioModel", back_populates="passageiro")
+    corridas = relationship("CorridaModel", back_populates="passageiro")
+
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -44,6 +46,9 @@ class MotoristaModel(Base):
     cnh = Column(String(9), unique=True, nullable=False)
 
     usuario = relationship("UsuarioModel", back_populates="motorista")
+    motorista_veiculo = relationship("MotoristaVeiculoModel", back_populates="motorista")
+    corridas = relationship("CorridaModel", back_populates="motorista")
+
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
@@ -52,7 +57,7 @@ class MotoristaVeiculoModel(Base):
     __tablename__ = "motorista_veiculo"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    id_motorista = Column(Integer, ForeignKey("motorista.id"), nullable=False)
+    id_motorista = Column(BigInteger, ForeignKey("motorista.id"), nullable=False)
     id_veiculo = Column(Integer, ForeignKey("veiculo.id"), nullable=False)
     datahora_inicio = Column(DateTime, default=datetime.now, nullable=False)
     datahora_fim = Column(DateTime, nullable=True)
@@ -73,15 +78,16 @@ class VeiculoModel(Base):
     id_classe = Column(Integer, ForeignKey("classe.id"), nullable=False)
 
     
-    id_modelo_veiculo = relationship("ModeloVeiculoModel", back_populates="veiculo")
+    modelo_veiculo = relationship("ModeloVeiculoModel", back_populates="veiculo")
     classe = relationship("ClasseModel", back_populates="veiculo")
+    motorista_veiculo = relationship("MotoristaVeiculoModel", back_populates="veiculo")
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
 
 class PropriedadeEnum(enum.Enum):
-    alugado = "alugado"
-    proprio = "proprio"
+    alugado = "Alugado"
+    proprio = "Próprio"
 
 class ModeloVeiculoModel(Base):
     __tablename__ = "modelo_veiculo"
@@ -96,6 +102,7 @@ class ModeloVeiculoModel(Base):
     id_combustivel = Column(Integer, ForeignKey("combustivel.id"), nullable=False)
 
     combustivel = relationship("CombustivelModel", back_populates="modelo_veiculo")
+    veiculo = relationship("VeiculoModel", back_populates="modelo_veiculo")
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
@@ -122,6 +129,86 @@ class ClasseModel(Base):
 
     
     veiculo = relationship("VeiculoModel", back_populates="classe")
+    servicos = relationship("ServicoModel", back_populates="classe")
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
+
+class ServicoModel(Base):
+    __tablename__ = "servico"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome_servico = Column(String(100), nullable=False)
+    id_classe = Column(Integer, ForeignKey("classe.id"), nullable=False)
+
+    classe = relationship("ClasseModel", back_populates="servicos")
+    corridas = relationship("CorridaModel", back_populates="servico")
+    
+# ----------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+
+class StatusCorridaEnum(enum.Enum):
+    pendente = "Pendente"
+    em_andamento = "Em andamento"
+    concluida = "Concluída"
+    cancelada = "Cancelada"
+
+
+class CorridaModel(Base):
+    __tablename__ = "corrida"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id_passageiro = Column(BigInteger, ForeignKey("passageiro.id"), nullable=False)
+    id_motorista = Column(BigInteger, ForeignKey("motorista.id"), nullable=False)
+    id_servico = Column(Integer, ForeignKey("servico.id"), nullable=False)
+    id_avaliacao = Column(BigInteger, ForeignKey("avaliacao.id"), unique=True, nullable=True)
+    datahora_inicio = Column(DateTime, default=datetime.now, nullable=False)
+    datahora_fim = Column(DateTime, nullable=True)
+    local_partida = Column(String(50), nullable=False)
+    local_destino = Column(String(50), nullable=False)
+    valor_estimado = Column(DECIMAL(10, 2), nullable=False)
+    status = Column(Enum(StatusCorridaEnum), default=StatusCorridaEnum.pendente, nullable=False)
+
+    passageiro = relationship("PassageiroModel", back_populates="corridas")
+    motorista = relationship("MotoristaModel", back_populates="corridas")
+    servico = relationship("ServicoModel", back_populates="corridas")
+    avaliacao = relationship("AvaliacaoModel", back_populates="corrida")
+    pagamentos = relationship("PagamentoModel", back_populates="corrida")
+
+# ----------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+
+class AvaliacaoModel(Base):
+    __tablename__ = "avaliacao"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nota_passageiro = Column(Integer, nullable=True)
+    nota_motorista = Column(Integer, nullable=True)
+    datahora_limite = Column(DateTime, nullable=False, default=datetime.now)
+
+    corrida = relationship("CorridaModel", back_populates="avaliacao", uselist=False)
+# ----------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+
+class PagamentoModel(Base):
+    __tablename__ = "pagamento"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id_corrida = Column(BigInteger, ForeignKey("corrida.id"), nullable=False)
+    valor = Column(DECIMAL(10, 2), nullable=False)
+    id_metodo_pagamento = Column(SmallInteger, ForeignKey("metodo_pagamento.id"), nullable=False)
+    datahora_transacao = Column(DateTime, default=datetime.now, nullable=False)
+
+    corrida = relationship("CorridaModel", back_populates="pagamentos")
+    metodo_pagamento = relationship("MetodoPagamentoModel", back_populates="pagamentos")
+# ----------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+
+class MetodoPagamentoModel(Base):
+    __tablename__ = "metodo_pagamento"
+
+    id = Column(SmallInteger, primary_key=True, autoincrement=True)
+    descricao = Column(String(45), nullable=False)
+    nome_financeira = Column(String(45), nullable=False)
+
+    pagamentos = relationship("PagamentoModel", back_populates="metodo_pagamento")
