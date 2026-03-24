@@ -19,6 +19,7 @@ avaliacao = APIRouter(tags = ["Avaliações"])
 pagamento = APIRouter(tags = ["Pagamentos"])
 metodo_pagamento = APIRouter(tags = ["Metodo-Pagamento"])
 
+
 @usuario.post("/usuario/post")
 async def criar_usuario(dados: UsuarioSchema, db: Session = Depends(get_db)):
     novo_usuario = UsuarioModel(**dados.model_dump())
@@ -28,12 +29,9 @@ async def criar_usuario(dados: UsuarioSchema, db: Session = Depends(get_db)):
     return {"mensagem": "Usuário criado com sucesso", "Usuário": novo_usuario}
 
 
-
 @usuario.get("/usuario/get")
 async def listar_usuarios(db: Session = Depends(get_db)):
     return db.query(UsuarioModel).all()
-
-
 
 
 @usuario.put("/usuario/{id}/update")
@@ -53,7 +51,6 @@ async def atualizar_usuario(id: int, dados: UsuarioUpdateSchema, db: Session = D
     db.refresh(usuarioUpdate) 
 
     return {"mensagem": "Usuário atualizado com sucesso.", "Usuário": usuarioUpdate}
-
 
 
 @usuario.delete("/usuario/{id}/delete")
@@ -98,11 +95,9 @@ async def criar_passageiro(dados: PassageiroSchema, db: Session = Depends(get_db
     return novo_passageiro
 
 
-
 @passageiro.get("/passageiro/get")
 async def listar_passageiros(db: Session = Depends(get_db)):
     return db.query(PassageiroModel).all()
-
 
 
 @passageiro.put("/passageiro/{id}/update")
@@ -122,7 +117,6 @@ async def atualizar_passageiro(id: int, dados: PassageiroUpdateSchema, db: Sessi
     db.refresh(passageiroUpdate) 
 
     return {"mensagem": "Passageiro atualizado com sucesso", "Passageiro": passageiroUpdate}
-
 
 
 @passageiro.delete("/passageiro/{id}/delete")
@@ -167,11 +161,9 @@ async def criar_motorista(dados: MotoristaSchema, db: Session = Depends(get_db))
     return novo_motorista
 
 
-
 @motorista.get("/motorista/get")
 async def listar_motoristas(db: Session = Depends(get_db)):
     return db.query(MotoristaModel).all()
-
 
 
 @motorista.put("/motorista/{id}/update")
@@ -191,7 +183,6 @@ async def atualizar_motorista(id: int, dados: MotoristaUpdateSchema, db: Session
     db.refresh(motoristaUpdate) 
 
     return {"mensagem": "Motorista atualizado com sucesso.", "Motorista": motoristaUpdate}
-
 
 
 @motorista.delete("/motorista/{id}/delete")
@@ -242,7 +233,6 @@ async def listar_motorista_veiculo(db: Session = Depends(get_db)):
     return db.query(MotoristaVeiculoModel).all()
 
 
-
 @motorista_veiculo.put("/motorista_veiculo/{id}/update")
 async def atualizar_motorista_veiculo(id: int, dados: MotoristaVeiculoUpdateSchema, db: Session = Depends(get_db)):
     
@@ -262,7 +252,6 @@ async def atualizar_motorista_veiculo(id: int, dados: MotoristaVeiculoUpdateSche
     db.refresh(relacao)
 
     return {"mensagem": "Relação atualizada com sucesso.", "dados": relacao}
-
 
 
 @motorista_veiculo.delete("/motorista_veiculo/{id}/delete")
@@ -328,11 +317,9 @@ async def criar_veiculo(dados: VeiculoSchema, db: Session = Depends(get_db)):
     return {"mensagem": "Veículo criado com sucesso", "veiculo": novo_veiculo}
 
 
-
 @veiculo.get("/veiculo/get")
 async def listar_veiculos(db: Session = Depends(get_db)):
     return db.query(VeiculoModel).all()
-
 
 
 @veiculo.put("/veiculo/{id}/update")
@@ -354,7 +341,6 @@ async def atualizar_veiculo(id: int, dados: VeiculoUpdateSchema, db: Session = D
     db.refresh(veiculo)
 
     return {"mensagem": "Veículo atualizado com sucesso", "veiculo": veiculo}
-
 
 
 @veiculo.delete("/veiculo/{id}/delete")
@@ -400,11 +386,9 @@ async def criar_modelo_veiculo(dados: ModeloVeiculoSchema, db: Session = Depends
     return {"mensagem": "Modelo de veículo criado com sucesso", "modelo": novo_modelo}
 
 
-
 @modelo_veiculo.get("/modelo_veiculo/get")
 async def listar_modelos_veiculo(db: Session = Depends(get_db)):
     return db.query(ModeloVeiculoModel).all()
-
 
 
 @modelo_veiculo.put("/modelo_veiculo/{id}/update")
@@ -426,7 +410,6 @@ async def atualizar_modelo_veiculo(id: int, dados: ModeloVeiculoUpdateSchema, db
     db.refresh(modelo)
 
     return {"mensagem": "Modelo atualizado com sucesso", "modelo": modelo}
-
 
 
 @modelo_veiculo.delete("/modelo_veiculo/{id}/delete")
@@ -462,11 +445,9 @@ async def criar_combustivel(dados: CombustivelSchema, db: Session = Depends(get_
     return {"mensagem": "Combustível criado com sucesso", "combustivel": novo_combustivel}
 
 
-
 @combustivel.get("/combustivel/get")
 async def listar_combustiveis(db: Session = Depends(get_db)):
     return db.query(CombustivelModel).all()
-
 
 
 @combustivel.put("/combustivel/{id}/update")
@@ -488,7 +469,6 @@ async def atualizar_combustivel(id: int, dados: CombustivelUpdateSchema, db: Ses
     db.refresh(combustivel)
 
     return {"mensagem": "Combustível atualizado com sucesso", "combustivel": combustivel}
-
 
 
 @combustivel.delete("/combustivel/{id}/delete")
@@ -524,11 +504,9 @@ async def criar_classe(dados: ClasseSchema, db: Session = Depends(get_db)):
     return {"mensagem": "Classe criada com sucesso", "classe": nova_classe}
 
 
-
 @classe.get("/classe/get")
 async def listar_classes(db: Session = Depends(get_db)):
     return db.query(ClasseModel).all()
-
 
 
 @classe.put("/classe/{id}/update")
@@ -552,7 +530,6 @@ async def atualizar_classe(id: int, dados: ClasseUpdateSchema, db: Session = Dep
     return {"mensagem": "Classe atualizada com sucesso", "classe": classe}
 
 
-
 @classe.delete("/classe/{id}/delete")
 async def deletar_classe(id: int, db: Session = Depends(get_db)):
 
@@ -570,10 +547,8 @@ async def deletar_classe(id: int, db: Session = Depends(get_db)):
     return {"mensagem": "Classe removida com sucesso"}
 
 
-
 # --------------------------------------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------------------------------------
-
 
 
 @servico.post("/servico/post")
@@ -595,11 +570,9 @@ async def criar_servico(dados: ServicoSchema, db: Session = Depends(get_db)):
     return {"mensagem": "Serviço criado com sucesso", "Serviço": novo_servico}
 
 
-
 @servico.get("/servico/get")
 async def listar_servicos(db: Session = Depends(get_db)):
     return db.query(ServicoModel).all()
-
 
 
 @servico.put("/servico/{id}/update")
@@ -621,7 +594,6 @@ async def atualizar_servico(id: int, dados: ServicoUpdateSchema, db: Session = D
     return servicoUpdate
 
 
-
 @servico.delete("/servico/{id}/delete")
 async def deletar_servico(id: int, db: Session = Depends(get_db)):
     servicoDelete = db.query(ServicoModel).filter(ServicoModel.id == id).first()
@@ -636,7 +608,6 @@ async def deletar_servico(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"mensagem": "Serviço deletado com sucesso."}
-
 
 
 # --------------------------------------------------------------------------------------------------------------------------------
@@ -736,11 +707,9 @@ async def criar_avaliacao(dados: AvaliacaoSchema, db: Session = Depends(get_db))
     return nova_avaliacao
 
 
-
 @avaliacao.get("/avaliacao/get")
 async def listar_avaliacoes(db: Session = Depends(get_db)):
     return db.query(AvaliacaoModel).all()
-
 
 
 @avaliacao.put("/avaliacao/{id}/update")
@@ -761,7 +730,6 @@ async def atualizar_avaliacao(id: int, dados: AvaliacaoUpdateSchema, db: Session
     return avaliacao_db
 
 
-
 @avaliacao.delete("/avaliacao/{id}/delete")
 async def deletar_avaliacao(id: int, db: Session = Depends(get_db)):
     avaliacao_db = db.query(AvaliacaoModel).filter(AvaliacaoModel.id == id).first()
@@ -775,10 +743,8 @@ async def deletar_avaliacao(id: int, db: Session = Depends(get_db)):
     return {"mensagem": "Avaliação deletada com sucesso"}
 
 
-
 # --------------------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------------
-
 
 
 @pagamento.post("/pagamento/post")
@@ -813,7 +779,6 @@ async def criar_pagamento(dados: PagamentoSchema, db: Session = Depends(get_db))
 @pagamento.get("/pagamento/get")
 async def listar_pagamentos(db: Session = Depends(get_db)):
     return db.query(PagamentoModel).all()
-
 
 
 @pagamento.put("/pagamento/{id}/update")
@@ -851,7 +816,6 @@ async def deletar_pagamento(id: int, db: Session = Depends(get_db)):
     return {"mensagem": "Pagamento deletado com sucesso."}
 
 
-
 # --------------------------------------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------------------------------------
 
@@ -872,7 +836,6 @@ async def listar_metodos(db: Session = Depends(get_db)):
     return db.query(MetodoPagamentoModel).all()
 
 
-
 @metodo_pagamento.put("/metodo_pagamento/{id}/update")
 async def atualizar_metodo(id: int, dados: MetodoPagamentoUpdateSchema, db: Session = Depends(get_db)):
     metodo = db.query(MetodoPagamentoModel).filter(MetodoPagamentoModel.id == id).first()
@@ -889,7 +852,6 @@ async def atualizar_metodo(id: int, dados: MetodoPagamentoUpdateSchema, db: Sess
     db.refresh(metodo)
 
     return metodo
-
 
 
 @metodo_pagamento.delete("/metodo_pagamento/{id}/delete")

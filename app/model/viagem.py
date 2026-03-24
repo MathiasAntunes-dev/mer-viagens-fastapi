@@ -33,7 +33,6 @@ class PassageiroModel(Base):
     usuario = relationship("UsuarioModel", back_populates="passageiro")
     corridas = relationship("CorridaModel", back_populates="passageiro")
 
-
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
@@ -48,7 +47,6 @@ class MotoristaModel(Base):
     usuario = relationship("UsuarioModel", back_populates="motorista")
     motorista_veiculo = relationship("MotoristaVeiculoModel", back_populates="motorista")
     corridas = relationship("CorridaModel", back_populates="motorista")
-
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
@@ -187,6 +185,7 @@ class AvaliacaoModel(Base):
     datahora_limite = Column(DateTime, nullable=False, default=datetime.now)
 
     corrida = relationship("CorridaModel", back_populates="avaliacao", uselist=False)
+
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
 
@@ -201,6 +200,7 @@ class PagamentoModel(Base):
 
     corrida = relationship("CorridaModel", back_populates="pagamentos")
     metodo_pagamento = relationship("MetodoPagamentoModel", back_populates="pagamentos")
+    
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
 
